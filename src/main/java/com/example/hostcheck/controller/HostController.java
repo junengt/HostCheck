@@ -32,6 +32,7 @@ public class HostController {
      * 조회의 단위는 한 호스트, 전체 호스트 제공(단일, 전체)
      * 전체 조회시 100개의 호스트가 모두 Unreachable 상태여도 조회는 1초 이내에 응답
      */
+    //
 
 //    //호스트 전체 조회
 //    @GetMapping("/host")
