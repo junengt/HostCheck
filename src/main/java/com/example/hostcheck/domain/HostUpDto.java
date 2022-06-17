@@ -3,7 +3,7 @@ package com.example.hostcheck.domain;
 import lombok.Data;
 
 @Data
-public class HostReqDto {
+public class HostUpDto {
 
     private String name;
     private String ip;
