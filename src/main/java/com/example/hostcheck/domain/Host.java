@@ -4,20 +4,27 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "host", uniqueConstraints = {@UniqueConstraint(name = "name_ip_unique",columnNames={"name", "ip"})})
+@Table(name = "HOST", uniqueConstraints = {@UniqueConstraint(name = "NAME_IP_UNIQUE",columnNames={"NAME", "ID"})})
 @Getter @Setter
 public class Host {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "host_id")
+    @Column(name = "ID")
     private Long id;
 
-    @Column(name = "name")
+    @Column(name = "NAME")
     private String name;
 
-    @Column(name = "ip")
+    @Column(name = "IP")
     private String ip;
+
+    @Column(name = "CREATE_DATE")
+    private LocalDateTime createDate;
+
+    @Column(name = "UPDATE_DATE")
+    private LocalDateTime updateDate;
 
 }

@@ -1,14 +1,22 @@
 package com.example.hostcheck.controller;
 
+import com.example.hostcheck.domain.HostListDto;
+import com.example.hostcheck.domain.HostReqDto;
+import com.example.hostcheck.service.HostService;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api")
 public class HostController {
 
-    //HostService 선언
+    private final HostService hostService;
 
     /**
      * 호스트 등록 관리 API
@@ -34,15 +42,22 @@ public class HostController {
      */
 
 
-//    //호스트 전체 조회
-//    @GetMapping("/host")
-//
+    //호스트 전체 조회
+    @GetMapping("/host")
+    public List<HostListDto> getHostAll() {
+        return hostService.getHostAll();
+    }
+
 //    //호스트 단일 조회
 //    @GetMapping("/host/{id}")
 //
-//    //호스트 등록
-//    @PostMapping("/host")
-//
+    //호스트 등록
+    @PostMapping("/host")
+    public String saveHost(@RequestBody HostReqDto hostReqDto) {
+        hostService.saveHost(hostReqDto);
+        return "호스트 등록 완료";
+    }
+
 //    //호스트 수정
 //    @PutMapping("/host/{id}")
 //
@@ -57,4 +72,10 @@ public class HostController {
 //
 //    //전체 호스트 Alive 모니터링 결과 조회
 //    @GetMapping("/host/monitor")
+
+//    @Data
+//    @AllArgsConstructor
+//    static class Result<T> {
+//        private T data;
+//    }
 }

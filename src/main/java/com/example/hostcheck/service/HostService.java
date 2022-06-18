@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 
@@ -25,8 +26,7 @@ public class HostService {
     }
 
     public List<HostListDto> getHostAll() {
-        return hostRepository.findAll().stream()
-                .map(h -> new HostListDto(h.getName(), h.getIp())).toList();
+        return hostRepository.findAll().stream().map(h -> new HostListDto(h.getName(),h.getIp(), h.getCreateDate(), h.getUpdateDate())).toList();
     }
 
     @Transactional
@@ -34,6 +34,8 @@ public class HostService {
         Host host = new Host();
         host.setName(hostReqDto.getName());
         host.setIp(hostReqDto.getIp());
+        host.setCreateDate(LocalDateTime.now());
+        host.setUpdateDate(LocalDateTime.now());
         hostRepository.save(host);
         return host.getId();
     }
