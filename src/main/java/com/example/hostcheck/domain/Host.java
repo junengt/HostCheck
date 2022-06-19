@@ -27,4 +27,10 @@ public class Host {
     @Column(name = "UPDATE_DATE")
     private LocalDateTime updateDate;
 
+    @Column(name = "IS_ALIVE")
+    private boolean isAlive = true;
+
+    @Column(name = "IS_LAST_ALIVE_DATE")
+    private LocalDateTime isLastAliveDate;
+
 }

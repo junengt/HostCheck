@@ -6,6 +6,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -17,18 +20,24 @@ public class HostService {
 
     private final HostRepository hostRepository;
 
+    //호스트 단건 조회
     public HostDto getHostOne(Long hostId) {
-        Host host = hostRepository.findById(hostId).get();
+        Host findHost = hostRepository.findById(hostId).get();
         HostDto hostDto = new HostDto();
-        hostDto.setName(host.getName());
-        hostDto.setIp(host.getIp());
+        hostDto.setName(findHost.getName());
+        hostDto.setIp(findHost.getIp());
+        hostDto.setCreateDate(findHost.getCreateDate());
+        hostDto.setUpdateDate(findHost.getUpdateDate());
         return hostDto;
     }
 
+    //호스트 전체 조회
     public List<HostListDto> getHostAll() {
-        return hostRepository.findAll().stream().map(h -> new HostListDto(h.getName(),h.getIp(), h.getCreateDate(), h.getUpdateDate())).toList();
+        return hostRepository.findAll().stream()
+                .map(h -> new HostListDto(h.getName(),h.getIp(), h.getCreateDate(), h.getUpdateDate())).toList();
     }
 
+    //호스트 등록
     @Transactional
     public Long saveHost(HostReqDto hostReqDto) {
         Host host = new Host();
@@ -36,21 +45,71 @@ public class HostService {
         host.setIp(hostReqDto.getIp());
         host.setCreateDate(LocalDateTime.now());
         host.setUpdateDate(LocalDateTime.now());
+        host.setIsLastAliveDate(LocalDateTime.now());
         hostRepository.save(host);
         return host.getId();
     }
 
+    //호스트 수정
     @Transactional
     public Long updateHost(Long hostId, HostUpDto hostUpDto) {
         Host findHost = hostRepository.findById(hostId).get();
-        findHost.setName(hostUpDto.getName());
-        findHost.setIp(hostUpDto.getIp());
+        if (findHost.getName() != hostUpDto.getName()) {
+            findHost.setName(hostUpDto.getName());
+        } else {
+            return findHost.getId();
+        } if (findHost.getIp() != hostUpDto.getIp()) {
+            findHost.setIp(hostUpDto.getIp());
+        } else {
+            return findHost.getId();
+        }
+        findHost.setUpdateDate(LocalDateTime.now());
         return findHost.getId();
     }
 
+    //호스트 삭제
     @Transactional
     public void deleteHost(Long hostId) {
         hostRepository.deleteById(hostId);
+    }
+
+    //호스트 현재 Alive 상태 조회
+    public void aliveNow(Long hostId) {
+        Host host = hostRepository.findById(hostId).get();
+        String ip = host.getIp();
+        InetAddress inetAddress = null;
+        try {
+            inetAddress = InetAddress.getByName(ip);
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+            return;
+        }
+        try {
+            if (inetAddress.isReachable(1000)) {
+                System.out.println("Reachable");
+            } else {
+                System.out.println("UnReachable");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    //전체 호스트 Alive 모니터링 결과 조회
+    public List<HostAliveMonitorListDto> aliveMonitorList() {
+        return hostRepository.findAll().stream()
+                .map(h -> new HostAliveMonitorListDto(h.getName(),h.getIp(),h.isAlive(),h.getIsLastAliveDate())).toList();
+    }
+
+    //단일 호스트 Alive 모니터링 결과 조회
+    public HostAliveMonitorDto aliveMonitorOne(Long hostId) {
+        Host findHost = hostRepository.findById(hostId).get();
+        HostAliveMonitorDto hostAliveMonitorDto = new HostAliveMonitorDto();
+        hostAliveMonitorDto.setName(findHost.getName());
+        hostAliveMonitorDto.setIp(findHost.getIp());
+        hostAliveMonitorDto.setAlive(findHost.isAlive());
+        hostAliveMonitorDto.setIsLastAliveDate(findHost.getIsLastAliveDate());
+        return hostAliveMonitorDto;
     }
 
 }

@@ -5,10 +5,10 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 @Data
-public class HostDto {
+public class HostAliveMonitorDto {
 
     private String name;
     private String ip;
-    private LocalDateTime createDate;
-    private LocalDateTime updateDate;
+    private boolean isAlive;
+    private LocalDateTime isLastAliveDate;
 }
