@@ -74,6 +74,7 @@ public class HostService {
     }
 
     //호스트 현재 Alive 상태 조회
+    @Transactional
     public void aliveNow(Long hostId) {
         Host host = hostRepository.findById(hostId).get();
         String ip = host.getIp();
@@ -86,8 +87,11 @@ public class HostService {
         }
         try {
             if (inetAddress.isReachable(1000)) {
+                host.setAlive(true);
                 System.out.println("Reachable");
             } else {
+                host.setAlive(false);
+                host.setIsLastAliveDate(LocalDateTime.now());
                 System.out.println("UnReachable");
             }
         } catch (IOException e) {
@@ -97,8 +101,14 @@ public class HostService {
 
     //전체 호스트 Alive 모니터링 결과 조회
     public List<HostAliveMonitorListDto> aliveMonitorList() {
-        return hostRepository.findAll().stream()
-                .map(h -> new HostAliveMonitorListDto(h.getName(),h.getIp(),h.isAlive(),h.getIsLastAliveDate())).toList();
+        long start = System.currentTimeMillis();
+        System.out.println("전체조회시작..");
+        List<HostAliveMonitorListDto> hostAliveMonitorListDtos = hostRepository.findAll().stream()
+                .map(h -> new HostAliveMonitorListDto(h.getName(), h.getIp(), h.isAlive(), h.getIsLastAliveDate())).toList();
+        long end = System.currentTimeMillis();
+        System.out.println("조회끝..");
+        System.out.println("조회 시간 : " + (end - start)/1000.0 + "초");
+        return hostAliveMonitorListDtos;
     }
 
     //단일 호스트 Alive 모니터링 결과 조회
