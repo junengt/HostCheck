@@ -114,12 +114,12 @@ public class HostService {
     //단일 호스트 Alive 모니터링 결과 조회
     public HostAliveMonitorDto aliveMonitorOne(Long hostId) {
         Host findHost = hostRepository.findById(hostId).get();
-        HostAliveMonitorDto hostAliveMonitorDto = new HostAliveMonitorDto();
-        hostAliveMonitorDto.setName(findHost.getName());
-        hostAliveMonitorDto.setIp(findHost.getIp());
-        hostAliveMonitorDto.setAlive(findHost.isAlive());
-        hostAliveMonitorDto.setIsLastAliveDate(findHost.getIsLastAliveDate());
-        return hostAliveMonitorDto;
+        return HostAliveMonitorDto.builder()
+                .name(findHost.getName())
+                .ip(findHost.getIp())
+                .isAlive(findHost.isAlive())
+                .isLastAliveDate(findHost.getIsLastAliveDate())
+                .build();
     }
 
 }
